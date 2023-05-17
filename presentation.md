@@ -16,7 +16,17 @@ _paginate: false
 
 ## Intro to SQLAlchemy
 
-<mark>ORMs</mark> in python
+---
+
+# Why I'm giving this talk
+
+- Have worked with SQLAlchemy for several years
+- Never really dove deep into different parts
+- Excellent chance to educate myself and help others at the same time.
+
+---
+
+## If you have questions, please interrupt or put them in the chat.
 
 ---
 
@@ -24,7 +34,7 @@ _paginate: false
 
 - MSc in CS and Data Science @Nijmegen
 - Data Scientist <mark>@ABNAMRO</mark> since 2019
-  - 1.5 years in Data Management
+  - 1.5 years in D&MA/CADM
   - 2 years in Global Markets
 
 - [![github_logo](images/Github-Mark-32px.png)](https://github.com/Baukebrenninkmeijer) [@baukebrenninkmeijer](https://github.com/Baukebrenninkmeijer)
@@ -37,10 +47,12 @@ _paginate: false
 # Outline
 
 1. Introduction
-2. Database support
-3. What is an ORM
-4. Examples
-5. conclusion
+2. Key Differences
+3. Database support
+4. What is an ORM
+5. Different APIs
+6. Examples
+7. conclusion
 
 ---
 
@@ -51,34 +63,29 @@ _class: lead
 
 # Introduction
 
+- We mostly compare PyODBC and SQLAlchemy
 - **SQLAlchemy**: Python SQL toolkit and ORM that gives full pythonic SQL capabilities to python
 - **PyODBC**: Python module that allows executing SQL to any ODBC database
 - Both support CRUD (Create, Read, Update, Delete) Operations
-
-
----
-
-<!-- _footer: ""
-_paginate: false
- -->
-
-![bg](images/sqlalchemy-website.png)
 
 ---
 
 # Key differences
 
+PyODBC vs. SQLAlchemy
+
 <style scoped>
 ul {
-   font-size:  70%;
+   font-size:  85%;
 }
+</style>
 
-- SQLAlchemy provides higher level of abstraction and expressiveness. More readable and maintainable code.
-- SQLAlchemy supports more advanced features such as:
+- **SQLAlchemy provides higher level of abstraction** and expressiveness. More readable and maintainable code.
+- SQLAlchemy supports **more advanced features** such as:
   - Connection pooling
   - Migrations
   - Schema reflection
-- SQLAlchemy allows different styles of querying, such as declarative, classical or hybrid.
+- **SQLAlchemy allows different styles of querying**, such as declarative, classical or hybrid.
 
 ---
 
@@ -86,13 +93,11 @@ ul {
 
 <style scoped>
 ul {
-   font-size:  70%;
+   font-size:  80%;
 }
 </style>
 
-<ul> <li><strong>SQLAlchemy</strong> supports multiple dialects and backends, including <ul> <li>MySQL</li> <li>PostgreSQL</li> <li>SQLite</li> <li>All ODBC enabled databases</li> </ul> </li> <li><strong>PyODBC</strong> supports any database with DB API 2.0, which include: <ul> <li>SQL Sever</li> <li>Access</li> <li>Excel</li> <li>Oracle</li> </ul> </li> </ul>
-
-<!-- - **SQLAlchemy** supports multiple dialects and backends, including
+- **SQLAlchemy** supports multiple dialects and backends, including
   - MySQL
   - PostgreSQL
   - SQLite
@@ -101,7 +106,7 @@ ul {
   - SQL Sever
   - Access
   - Excel
-  - Oracle -->
+  - Oracle
 
 ---
 
@@ -116,13 +121,8 @@ ul {
 
 # What does that mean?
 
-- **SQLAlchemy** has ORM features that allows definition of classes that represent database tables, manipulating data using python syntax.
+- **SQLAlchemy** has ORM features that allows defining of classes that represent database tables, manipulating data using python syntax.
 - **PyODBC** does not have any ORM features. You can use other ORMs on top of PyODBC, such as Django, PeeWee, and SQLAlchemy.
-
----
-
-<!-- _footer: "" -->
-![bg fit](images/sqlalchemy-layers.png)
 
 ---
 
@@ -135,33 +135,45 @@ SQLAlchemy actually has 2/4 different APIs
 - SQLAlchemy Core 2.0 style
 - SQLAlchemy Core 1.x style
 
+
 ---
 
 # SQLAlchemy APIs
 
 - **ORM** provides high level interface, mapping python classes to database tables
-- **Core** provides a low-level interface for executing SQL statements and manipulating metdata.
+- **Core** provides a low-level interface for executing SQL statements and manipulating metdata. More similar to PyODBC.
+
+---
+
+<!-- _footer: "" -->
+![bg fit](images/sqlalchemy-layers.png)
 
 ---
 
 # What it is not
 
-<mark>SQLAlchemy is not an analytics interface.</mark>
-
-Large aggregations and complex groupbys are **not supported**.
-
-It's main functions are **retrieval, insert, update and deleting** of data.
+- SQLAlchemy is **not an analytics** interface.
+  - Large aggregations and complex groupbys are **not supported**.
+- It is not a web framework data layer, such as Django.
+  - Can be used as such with flask.
+  - But can also be used with an API or data libraries such as pandas.
 
 ---
 
 # Query Construction
 
+<style scoped>
+ul {
+   font-size:  80%;
+}
+
+</style>
 - **SQLAlchemy**
   - Supports constructing SQL queries using Python expressions and operators.
   - Textual SQL is also supported.
 - **PyODBC**
   - requires raw SQL statements as string, which are passed to the cursor object.
-  - Placeholders and parameters are needed to dynamic usage and avoiding SQL injection attacks.
+  - Placeholders and parameters are needed for dynamic usage and avoiding SQL injection attacks.
 
 
 ---
@@ -183,7 +195,7 @@ class User(Base):
     name = Column(String)
     age = Column(Integer)
 
-metadata.create_all(engine)
+Base.metadata.create_all(engine) # create the table in the database
 ```
 
 ---
@@ -339,6 +351,16 @@ session.commit()
 
 ---
 
+# Pythonic updates
+
+```python
+user = session.query(User).filter_by(id=1).first()
+user.name = "Bob"
+session.commit()
+```
+
+---
+
 
 # Delete
 
@@ -347,6 +369,39 @@ from sqlalchemy import delete
 stmt = delete(User).where(User.name.in_(["Bob"]))
 session.execute(stmt)
 ```
+
+---
+
+# In conclusion
+
+- Both frameworks have their time and place.
+- SQLAlchemy generally more feature rich and better maintainable.
+- In more complex and larger projects, often SQLAlchemy should be preferred.
+
+---
+
+<!-- _footer: ""
+_paginate: false
+ -->
+
+![bg](images/sqlalchemy-website.png)
+
+---
+
+# Something extra
+
+Looking at an API?
+
+- SQLAlchemy is great for API usage
+- Have a look at [SQLModel](https://sqlmodel.tiangolo.com/), which combines SQLAlchemy and pydantic for APIs.
+- Also integrates neatly with FastAPI (Same author).
+
+---
+
+# Want to get started?
+
+1. [Blue book of coding - SQLAlchemy](https://lyz-code.github.io/blue-book/coding/python/sqlalchemy/)
+2. [SQLAlchemy docs data tutorial](https://docs.sqlalchemy.org/en/20/tutorial/data.html )
 
 ---
 
