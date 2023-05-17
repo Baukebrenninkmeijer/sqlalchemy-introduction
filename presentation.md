@@ -37,11 +37,10 @@ _paginate: false
 # Outline
 
 1. Introduction
-2. SQLAlchemy
-3. PyODBC
-4. Comparison of features and advantages
-5. Examples
-6. conclusion
+2. Database support
+3. What is an ORM
+4. Examples
+5. conclusion
 
 ---
 
@@ -52,10 +51,10 @@ _class: lead
 
 # Introduction
 
-**SQLAlchemy**: Python SQL toolkit and ORM that gives full SQL capabilities to python
-**PyODBC**: Python module that allows connecting to any ODBC database
+- **SQLAlchemy**: Python SQL toolkit and ORM that gives full pythonic SQL capabilities to python
+- **PyODBC**: Python module that allows executing SQL to any ODBC database
+- Both support CRUD (Create, Read, Update, Delete) Operations
 
-_We will compare and contrast the features, advantages and disadvantages._
 
 ---
 
@@ -67,23 +66,42 @@ _paginate: false
 
 ---
 
+# Key differences
+
+<style scoped>
+ul {
+   font-size:  70%;
+}
+
+- SQLAlchemy provides higher level of abstraction and expressiveness. More readable and maintainable code.
+- SQLAlchemy supports more advanced features such as:
+  - Connection pooling
+  - Migrations
+  - Schema reflection
+- SQLAlchemy allows different styles of querying, such as declarative, classical or hybrid.
+
+---
+
 # Database support
 
 <style scoped>
 ul {
-   font-size:  85%;
+   font-size:  70%;
 }
 </style>
 
-- **SQLAlchemy** supports multiple databases and backends, including
+<ul> <li><strong>SQLAlchemy</strong> supports multiple dialects and backends, including <ul> <li>MySQL</li> <li>PostgreSQL</li> <li>SQLite</li> <li>All ODBC enabled databases</li> </ul> </li> <li><strong>PyODBC</strong> supports any database with DB API 2.0, which include: <ul> <li>SQL Sever</li> <li>Access</li> <li>Excel</li> <li>Oracle</li> </ul> </li> </ul>
+
+<!-- - **SQLAlchemy** supports multiple dialects and backends, including
   - MySQL
   - PostgreSQL
   - SQLite
-  - Can use PyODBC to connect to almost anything
-- **PyODBC** supports any database with DB API 2.0, which also includes:
+  - All ODBC enabled databases
+- **PyODBC** supports any database with DB API 2.0, which include:
   - SQL Sever
   - Access
   - Excel
+  - Oracle -->
 
 ---
 
@@ -91,14 +109,48 @@ ul {
 
 - **O**bject **R**elational **M**apping
 - Method to align code and database structures
-- Allow to interact with databases in code, rather than raw SQL.
+- Facilitates interactions with databases in code, rather than raw SQL.
+- Generally done using classes or other types of attribute-wise data capture
 
 ---
 
-# ORM for us
+# What does that mean?
 
-- **SQLAlchemy** has ORM that allows definition of classes that represent database tables, manipulating data using python syntax.
+- **SQLAlchemy** has ORM features that allows definition of classes that represent database tables, manipulating data using python syntax.
 - **PyODBC** does not have any ORM features. You can use other ORMs on top of PyODBC, such as Django, PeeWee, and SQLAlchemy.
+
+---
+
+<!-- _footer: "" -->
+![bg fit](images/sqlalchemy-layers.png)
+
+---
+
+# 4 APIs
+
+SQLAlchemy actually has 2/4 different APIs
+
+- **SQLAlchemy ORM 2.0 style**
+- SQLAlchemy ORM 1.x style
+- SQLAlchemy Core 2.0 style
+- SQLAlchemy Core 1.x style
+
+---
+
+# SQLAlchemy APIs
+
+- **ORM** provides high level interface, mapping python classes to database tables
+- **Core** provides a low-level interface for executing SQL statements and manipulating metdata.
+
+---
+
+# What it is not
+
+<mark>SQLAlchemy is not an analytics interface.</mark>
+
+Large aggregations and complex groupbys are **not supported**.
+
+It's main functions are **retrieval, insert, update and deleting** of data.
 
 ---
 
@@ -114,32 +166,14 @@ ul {
 
 ---
 
-# 3 APIs
 
-SQLAlchemy actually has 3 different APIs
-
-- **SQLAlchemy 2.0 style** (used today)
-- SQLAlchemy ORM 1.x style
-- SQLAlchemy Core 1.x style
-
----
-
-# What it is not
-
-<mark>SQLAlchemy is not an analytics interface.</mark>
-
-Large aggregations and complex groupbys are **not supported**.
-
-It's main functions are **retrieval, insert, update and deleting** of data.
-
----
 
 # Creating tables
 
 ```python
 # SQLAlchemy
 # imports...
-engine = create_engine('sqlite:///test.db', echo=True)
+engine = create_engine('sqlite:///:memory:', echo=True)
 Base = declarative_base()
 
 # Define a class that represents the users table
